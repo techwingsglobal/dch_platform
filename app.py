@@ -50,20 +50,29 @@ def chat_screen():
 def chat():
     user_message = request.json.get("message")
     voice = request.json.get("voice", False)  # Voice flag to decide response type
+
+    # Step 1: Check the local database
+    db_answer = search_medical_data(user_message)
+    if db_answer:
+        return jsonify({"response": f"(Database): {db_answer}", "voice": voice})
+
+    # Step 2: Use GPT-4 to generate a contextual response
     messages = [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": user_message}
+        {"role": "system", "content": "You are a knowledgeable assistant that can provide information similar to online search results."},
+        {"role": "user", "content": f"Question: {user_message}. If no direct answer is available, provide detailed context or insights."}
     ]
+
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # Specify model version
+            model="gpt-4",
             messages=messages,
-            max_tokens=150
+            max_tokens=300  # Increase max tokens for more detailed responses
         )
         answer = response.choices[0].message['content'].strip()
-        return jsonify({"response": answer, "voice": voice})
+        return jsonify({"response": f"(AI): {answer}", "voice": voice})
     except Exception as e:
-        return jsonify({"response": f"Error: {str(e)}", "voice": voice})
+        return jsonify({"response": f"Error: Unable to process your request. {str(e)}", "voice": voice})
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000)
