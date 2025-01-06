@@ -3,15 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Doctor's Assistant Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="login-body">
     <div class="login-container">
-        <h2>Login</h2>
+        <div class="login-header">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Doctor's Assistant Logo" class="logo">
+            <h2>Welcome to Doctor's Assistant</h2>
+            <p>Your AI-powered medical assistant</p>
+        </div>
         <form method="POST" action="/validate">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
+            <div class="input-group">
+                <img src="{{ url_for('static', filename='images/user-icon.png') }}" alt="User Icon" class="input-icon">
+                <input type="text" name="username" placeholder="Username" required>
+            </div>
+            <div class="input-group">
+                <img src="{{ url_for('static', filename='images/password-icon.png') }}" alt="Password Icon" class="input-icon">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
             {% if error %}
                 <p class="error">{{ error }}</p>
             {% endif %}

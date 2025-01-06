@@ -1,157 +1,194 @@
 /* static/jarvis-style.css */
 body {
-    font-family: 'Orbitron', sans-serif;
-    background-color: #011627;
-    color: #00f0ff;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f3f4f6;
     margin: 0;
     padding: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    background: linear-gradient(135deg, #00416a, #e4e5e6);
-}
-
-.jarvis-container {
-    width: 600px;
-    height: 80vh;
-    background: rgba(5, 15, 44, 0.9);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0, 255, 255, 0.1);
-    padding: 20px;
-    border: 1px solid rgba(0, 255, 255, 0.3);
-}
-
-.chat-window {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    align-items: center;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+header {
+    background: #007bff;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+main {
+    display: flex;
+    padding: 20px;
+}
+
+.chat-section {
+    width: 60%;
+    padding-right: 20px;
 }
 
 .chat-header {
-    text-align: center;
-    color: #00f0ff;
-    font-size: 24px;
+    font-size: 20px;
+    font-weight: bold;
     margin-bottom: 15px;
-    border-bottom: 2px solid #00f0ff;
-    padding-bottom: 1px;
+    border-bottom: 2px solid #007bff;
 }
 
 .chat-box {
-    flex-grow: 1;
-    background-color: rgba(10, 25, 70, 0.6);
-    border-radius: 10px;
-    padding: 15px;
+    height: 400px;
     overflow-y: auto;
-    margin: 10px 0;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
 }
 
 .input-container {
     display: flex;
-    margin-top: 10px;
+    gap: 10px;
 }
 
 #user-input {
-    flex-grow: 1;
+    flex: 1;
     padding: 10px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid #00f0ff;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    color: #00f0ff;
-    outline: none;
+    font-size: 16px;
 }
 
-#send-btn {
+button {
     padding: 10px 20px;
-    background-color: #00f0ff;
+    background: #007bff;
+    color: #fff;
     border: none;
     border-radius: 5px;
-    color: #000;
-    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#send-btn:hover {
-    background-color: #00b3cc;
-}
-
-#voice-btn {
-    padding: 10px 20px;
-    background-color: #00b3cc;
-    border: none;
-    border-radius: 5px;
-    color: #000;
     font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-#voice-btn:hover {
-    background-color: #00b3cc;
-}
-.message {
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    color: #00f0ff;
-    background-color: rgba(0, 0, 0, 0.4);
-    border-left: 5px solid #00f0ff;
-}
-@keyframes slideIn {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
 }
 
-.message.bot {
-    background-color: rgba(0, 123, 255, 0.6); /* Blue shade */
-    color: white;
-    border-left: 5px solid deepskyblue; /* Enhance with a brighter blue border */
-    animation: slideIn 0.5s ease-out;
+button:hover {
+    background: #0056b3;
 }
-.login-container {
-    width: 300px;
-    margin: auto;
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 20px;
-    border-radius: 10px;
+
+.info-section {
+    width: 40%;
     text-align: center;
-    color: white;
 }
 
-.login-container h2 {
+.info-section img {
+    max-width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #007bff;
+    color: #fff;
+    font-size: 14px;
+}
+/* Login Screen Styles */
+.login-body {
+    font-family: 'Roboto', sans-serif;
+    background: url('/static/images/medical-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    width: 500px;
+    max-width: 90%;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    overflow: hidden;
+}
+
+.login-header {
     margin-bottom: 20px;
 }
 
-.login-container input {
-    width: 100%;
-    padding: 10px;
+.logo {
+    width: 80px;
+    height: auto;
     margin-bottom: 10px;
-    border: none;
-    border-radius: 5px;
 }
 
-.login-container button {
+.login-header h2 {
+    color: #333;
+    margin: 0;
+}
+
+.login-header p {
+    color: #555;
+    font-size: 14px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 15px;
+    width: 100%; /* Ensures input group fits within the container */
+    box-sizing: border-box; /* Includes padding and border in width calculation */
+}
+
+.input-icon {
+    position: absolute;
+    top: 50%;/* Centers the icon vertically */
+    left: 10px;
+    transform: translateY(-50%); /* Adjusts for exact centering */
+    width: 20px;
+    height: 20px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Prevents layout issues due to padding */
+}
+
+button {
     width: 100%;
     padding: 10px;
-    background-color: #00f0ff;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
     border: none;
     border-radius: 5px;
-    color: black;
-    font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
-.message.bot::before {
-    content: attr(data-source);
-    font-size: 12px;
-    color: gray;
-    margin-right: 5px;
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
