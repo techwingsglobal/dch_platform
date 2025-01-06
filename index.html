@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gen AI Chatbot</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <div class="left-sidebar">
+            <div class="timer">
+                <h3>Timer</h3>
+                <p id="timerDisplay">00:37</p>
+                <button id="startTimer">Start Timer</button>
+            </div>
+        </div>
+
+        <div class="main-chat">
+            <h2>GEN AI Chatbot</h2>
+            <div id="chatWindow" class="chat-window"></div>
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Type your message...">
+                <button id="sendMessage">Send</button>
+            </div>
+        </div>
+
+        <div class="right-sidebar">
+            <h3>Statistics</h3>
+            <p>Average response time: <span id="responseTime">1.2s</span></p>
+            <p>Interactions: <span id="interactionCount">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('sendMessage').addEventListener('click', function() {
+            const userInput = document.getElementById('userInput').value;
+            if (userInput.trim() !== "") {
+                fetch("/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({message: userInput})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const chatWindow = document.getElementById('chatWindow');
+                    chatWindow.innerHTML += `<div class="message"><strong>You: </strong>${userInput}</div>`;
+                    chatWindow.innerHTML += `<div class="message"><strong>Bot: </strong>${data.message}</div>`;
+                    document.getElementById('userInput').value = '';
+                    document.getElementById('interactionCount').innerText = parseInt(document.getElementById('interactionCount').innerText) + 1;
+                });
+            }
+        });
+
+        // Timer Logic
+        document.getElementById('startTimer').addEventListener('click', function() {
+            let time = 37;
+            const timerDisplay = document.getElementById('timerDisplay');
+            const interval = setInterval(function() {
+                if (time <= 0) {
+                    clearInterval(interval);
+                    return;
+                }
+                time--;
+                timerDisplay.innerText = `00:${time < 10 ? '0' + time : time}`;
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
