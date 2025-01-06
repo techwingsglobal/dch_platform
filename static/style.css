@@ -1,59 +1,82 @@
-/* static/jarvis-style.css */
-body {
+/* Chat Screen Styles */
+.chat-body {
     font-family: 'Roboto', sans-serif;
-    background-color: #f3f4f6;
+    background: linear-gradient(135deg, #007bff, #f3f4f6);
     margin: 0;
     padding: 0;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    color: #333;
+    height: 100vh;
 }
 
-.container {
-    width: 80%;
+.chat-container {
+    width: 90%;
     max-width: 1200px;
-    margin: 20px auto;
-    background: #fff;
+    background: #ffffff;
     border-radius: 10px;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
-header {
+.chat-header {
     background: #007bff;
-    color: #fff;
+    color: #ffffff;
     text-align: center;
     padding: 20px;
-    font-size: 24px;
-    font-weight: bold;
 }
 
-main {
+.chat-logo {
+    width: 60px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.chat-main {
     display: flex;
     padding: 20px;
 }
 
 .chat-section {
-    width: 60%;
-    padding-right: 20px;
-}
-
-.chat-header {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #007bff;
+    flex: 2;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 .chat-box {
-    height: 400px;
+    flex-grow: 1;
     overflow-y: auto;
-    background: #f8f9fa;
+    background: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 5px;
-    padding: 10px;
+    padding: 15px;
     margin-bottom: 15px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.message.user {
+    background: #d9f7d9;
+    color: #333;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    align-self: flex-end;
+    max-width: 70%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.message.bot {
+    background: #e9e9ff;
+    color: #333;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    align-self: flex-start;
+    max-width: 70%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .input-container {
@@ -62,21 +85,23 @@ main {
 }
 
 #user-input {
-    flex: 1;
+    flex-grow: 1;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 button {
     padding: 10px 20px;
+    font-size: 16px;
     background: #007bff;
-    color: #fff;
+    color: #ffffff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -84,8 +109,12 @@ button:hover {
 }
 
 .info-section {
-    width: 40%;
+    flex: 1;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
     text-align: center;
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .info-section img {
@@ -98,9 +127,10 @@ footer {
     text-align: center;
     padding: 10px;
     background: #007bff;
-    color: #fff;
+    color: #ffffff;
     font-size: 14px;
 }
+
 /* Login Screen Styles */
 .login-body {
     font-family: 'Roboto', sans-serif;
