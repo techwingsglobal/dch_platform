@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
+
     function sendMessage(useVoice) {
         const input = document.getElementById("user-input");
         const userText = input.value.trim();
