@@ -8,12 +8,19 @@ document.addEventListener("DOMContentLoaded", function() {
         const chatBox = document.getElementById("chat-box");
         const messageDiv = document.createElement("div");
         messageDiv.className = `message ${role}`;
-        messageDiv.textContent = text;
+        if (role === 'bot') {
+            messageDiv.innerHTML = text; // Use innerHTML for bot messages to render HTML responses
+        } else {
+            messageDiv.textContent = text;
+        }
         chatBox.appendChild(messageDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-
+function scrollToBottom() {
+    const chatBox = document.getElementById("chat-box");
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
     function sendMessage(useVoice) {
         const input = document.getElementById("user-input");
         const userText = input.value.trim();

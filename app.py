@@ -125,12 +125,16 @@ def chat():
     if is_database_related(user_message):
         db_answers = search_medical_data(user_message)
         if db_answers:
-            formatted_response = "Here is what I found from the database:\n"
+            formatted_response = "<div style='font-family: Arial, sans-serif;'>"
+            formatted_response += "<strong>Here is what I found from the database:</strong><br>"
             for table_data in db_answers:
                 for table_name, rows in table_data.items():
-                    formatted_response += f"\n**{table_name}**:\n"
+                    formatted_response += f"<h4 style='color: #0056b3;'>{table_name.replace('_', ' ').title()}</h4>"
+                    formatted_response += "<ul>"
                     for row in rows:
-                        formatted_response += " | ".join(map(str, row)) + "\n"
+                        formatted_response += "<li>" + " | ".join([f"<strong>{col}:</strong> {val}" for col, val in zip(row.keys(), row)]) + "</li>"
+                    formatted_response += "</ul>"
+            formatted_response += "</div>"
             return jsonify({"response": f"(Database): {formatted_response.strip()}", "voice": voice})
 
     # Step 2: Use GPT-4 for general questions
@@ -146,9 +150,22 @@ def chat():
             max_tokens=500  # Allow more detailed responses
         )
         answer = response.choices[0].message['content'].strip()
-        return jsonify({"response": f"(AI): {answer}", "voice": voice})
+        structured_answer = format_gpt_response(answer)
+        return jsonify({"response": f"(AI): {structured_answer}", "voice": voice})
     except Exception as e:
         return jsonify({"response": f"Error: Unable to process your request. {str(e)}", "voice": voice})
+
+
+def format_gpt_response(answer):
+    """
+    Format GPT-4 responses for better readability using HTML.
+    """
+    formatted = "<div style='font-family: Arial, sans-serif;'>"
+    for line in answer.split("\n"):
+        if line.strip():
+            formatted += f"<p style='margin: 5px 0;'>{line.strip()}</p>"
+    formatted += "</div>"
+    return formatted
 
 
 if __name__ == "__main__":
