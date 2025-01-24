@@ -4,12 +4,16 @@ import openai
 import sqlite3
 import snowflake.connector
 
+
+
+
 # Initialize config parser
 config = configparser.ConfigParser()
 config.read('config.ini')
 
 app = Flask(__name__)
 
+app.secret_key = "your_secret_key"
 # Fetch sensitive data from config
 api_key = config['DEFAULT']['api_key']
 admin_user = config['DEFAULT']['admin_user']
@@ -85,7 +89,13 @@ def validate():
 
 @app.route("/chat_screen")
 def chat_screen():
-    return render_template("index.html")
+    role = request.args.get('role')
+    if role == 'doctor':
+        return render_template("doctor_chat.html")
+    elif role == 'staff':
+        return render_template("staff_chat.html")
+    else:
+        return render_template("individual_chat.html")
 
 
 def is_database_related(user_message):

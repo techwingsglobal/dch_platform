@@ -100,7 +100,7 @@ body {
     padding: 12px;
     border-radius: 12px;
     margin-bottom: 15px;
-    max-width: 75%;
+    max-width: 80%;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -118,6 +118,11 @@ body {
     animation: slideInLeft 0.3s ease;
     font-family: 'Roboto', sans-serif;
     line-height: 1.5;
+    max-width: 90%; /* Keeps the bot's response within the container width */
+    word-wrap: break-word; /* Ensures long words break onto the next line */
+    white-space: pre-wrap; /* Preserves line breaks */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Avoids content spilling over */
 }
 @keyframes slideInRight {
     from { opacity: 0; transform: translateX(50px); }
@@ -145,13 +150,17 @@ body {
 }
 .input-container {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     padding: 15px;
     border-radius: 10px;
     background: #f1f1f1;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0px 5px 10px rgba(0, 0, 0, 0.05);
 }
-
+.button-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
 #user-input {
     flex-grow: 1;
     padding: 12px;
@@ -318,17 +327,4 @@ button:hover {
     color: red;
     font-size: 14px;
     margin-bottom: 10px;
-}
-
-.scroll-button {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    padding: 10px;
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }
