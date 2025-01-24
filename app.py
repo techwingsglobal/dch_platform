@@ -1,9 +1,9 @@
 import configparser
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 import openai
 import sqlite3
 import snowflake.connector
-
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 
@@ -16,15 +16,22 @@ app = Flask(__name__)
 app.secret_key = "your_secret_key"
 # Fetch sensitive data from config
 api_key = config['DEFAULT']['api_key']
-admin_user = config['DEFAULT']['admin_user']
-admin_password = config['DEFAULT']['admin_password']
-
 # Set OpenAI API key
 openai.api_key = api_key
 
 # User credentials
-users = {admin_user: admin_password}
-def query_snowflake(query):
+users = {
+    "doctor_user": {"password": "doctor_pass", "role": "doctor"},
+    "staff_user": {"password": "staff_pass", "role": "staff"},
+    "individual_user": {"password": "indiv_pass", "role": "individual"}
+}
+def query_snowflake(query, params=None):
+    """
+    Executes a parameterized query on Snowflake.
+    :param query: The SQL query with placeholders
+    :param params: Tuple of parameters to be substituted into the query
+    :return: Query results
+    """
     config = configparser.ConfigParser()
     config.read('config.ini')
 
@@ -39,11 +46,19 @@ def query_snowflake(query):
     )
 
     cursor = conn.cursor()
-    cursor.execute(query)
-    results = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    try:
+        # Execute query with or without parameters
+        cursor.execute(query, params or ())
+        results = cursor.fetchall()
+    except Exception as e:
+        print(f"Error executing Snowflake query: {e}")
+        results = []
+    finally:
+        cursor.close()
+        conn.close()
+
     return results
+
 def search_medical_data(query):
     # Map table names to columns that might be relevant for the search
     table_column_map = {
@@ -78,18 +93,43 @@ def search_medical_data(query):
 def login():
     return render_template("login.html")
 
+
 @app.route("/validate", methods=["POST"])
 def validate():
     username = request.form.get("username")
     password = request.form.get("password")
-    if username in users and users[username] == password:
-        return redirect(url_for("chat_screen"))
-    else:
-        return render_template("login.html", error="Invalid Credentials")
+
+    try:
+        # Fetch user from the database
+        query = "SELECT password_hash, role FROM USERS WHERE username = %s"
+        result = query_snowflake(query, (username,))
+
+        if result:
+            password_hash, role = result[0]
+
+            # Verify the password
+            if check_password_hash(password_hash, password):
+                session["username"] = username
+                session["role"] = role
+                return redirect(url_for("chat_screen", role=role))
+            else:
+                return render_template("login.html", error="Invalid Credentials")
+        else:
+            return render_template("login.html", error="User not found")
+    except Exception as e:
+        print(f"Error during login: {e}")
+        return render_template("login.html", error="An error occurred. Please try again.")
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 @app.route("/chat_screen")
 def chat_screen():
-    role = request.args.get('role')
+    role = session.get("role")  # Use session.get() to avoid KeyError
+    if not role:
+        return redirect(url_for("login"))  # Redirect to login if the session is invalid
+
     if role == 'doctor':
         return render_template("doctor_chat.html")
     elif role == 'staff':
@@ -130,7 +170,7 @@ def is_database_related(user_message):
 def chat():
     user_message = request.json.get("message")
     voice = request.json.get("voice", False)  # Voice flag to decide response type
-
+    role = session.get("role", "individual")
     # Step 1: Determine if the query is database-related
     if is_database_related(user_message):
         db_answers = search_medical_data(user_message)
@@ -176,7 +216,10 @@ def format_gpt_response(answer):
             formatted += f"<p style='margin: 5px 0;'>{line.strip()}</p>"
     formatted += "</div>"
     return formatted
-
+def add_user(username, password, role):
+    hashed_password = generate_password_hash(password, method="pbkdf2:sha256", salt_length=16)
+    query = "INSERT INTO USERS (username, password_hash, role) VALUES (%s, %s, %s)"
+    query_snowflake(query, (username, hashed_password, role))
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8000)
