@@ -3,32 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor's Assistant Login</title>
+    <title>Add New User</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="login-body">
     <div class="login-container">
         <div class="login-header">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Doctor's Assistant Logo" class="logo">
-            <h2>Welcome to Doctor's Assistant</h2>
-            <p>Your AI-powered medical assistant</p>
+            <h2>Add New User</h2>
+            <p>Enter user details</p>
         </div>
-        <form method="POST" action="/validate">
+        <form method="POST" action="/add_user">
             <div class="input-group">
-                <img src="{{ url_for('static', filename='images/user-icon.png') }}" alt="User Icon" class="input-icon">
                 <input type="text" name="username" placeholder="Username" required>
             </div>
             <div class="input-group">
-                <img src="{{ url_for('static', filename='images/password-icon.png') }}" alt="Password Icon" class="input-icon">
                 <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="input-group">
+                <select name="role" required>
+                    <option value="doctor">Doctor</option>
+                    <option value="staff">Staff</option>
+                    <option value="individual">Individual</option>
+                    <option value="admin">Admin</option>
+                </select>
             </div>
             {% if error %}
                 <p class="error">{{ error }}</p>
             {% endif %}
-            <button type="submit">Login</button>
-            <p>Don't have an account? <a href="/register">Register Here</a></p>
-            <p>Admin? <a href="/admin_login">Login Here</a></p>
+            <button type="submit">Add User</button>
         </form>
+        <p><a href="/admin_dashboard">Back to Dashboard</a></p>
     </div>
 </body>
 </html>

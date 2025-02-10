@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <header class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="/admin_dashboard">Users</a></li>
+                    <li><a href="/activity_logs">Activity Logs</a></li>
+                    <li><a href="/system_settings">Settings</a></li>
+                    <li><a href="{{ url_for('logout') }}" class="logout-button">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main class="dashboard-main">
+            <section class="user-management">
+                <h2>User Management</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user[0] }}</td>
+                            <td>{{ user[1] }}</td>
+                            <td>
+                                <form method="POST" action="/update_user" class="inline-form">
+                                    <input type="hidden" name="username" value="{{ user[0] }}">
+                                    <select name="role">
+                                        <option value="doctor" {% if user[1] == 'doctor' %}selected{% endif %}>Doctor</option>
+                                        <option value="staff" {% if user[1] == 'staff' %}selected{% endif %}>Staff</option>
+                                        <option value="individual" {% if user[1] == 'individual' %}selected{% endif %}>Individual</option>
+                                        <option value="admin" {% if user[1] == 'admin' %}selected{% endif %}>Admin</option>
+                                    </select>
+                                    <button type="submit">Update</button>
+                                </form>
+                                <form method="POST" action="/delete_user" onsubmit="return confirm('Are you sure?');" class="inline-form">
+                                    <input type="hidden" name="username" value="{{ user[0] }}">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+            <section class="quick-actions">
+                <h2>Quick Actions</h2>
+                <button onclick="location.href='/add_user'">Add New User</button>
+                <button onclick="location.href='/reset_password'">Reset User Password</button>
+            </section>
+            <section class="activity-logs">
+                <h2>Activity Logs</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Action</th>
+                            <th>Performed By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>{{ log[0] }}</td>
+                            <td>{{ log[1] }}</td>
+                            <td>{{ log[2] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

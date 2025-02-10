@@ -25,6 +25,10 @@ users = {
     "staff_user": {"password": "staff_pass", "role": "staff"},
     "individual_user": {"password": "indiv_pass", "role": "individual"}
 }
+# Admin Credentials (stored securely in DB in real-world scenarios)
+ADMIN_CREDENTIALS = {
+    "admin": generate_password_hash("admin_pass")
+}
 def query_snowflake(query, params=None):
     """
     Executes a parameterized query on Snowflake.
@@ -249,6 +253,120 @@ def add_user(username, password, role):
     hashed_password = generate_password_hash(password, method="pbkdf2:sha256", salt_length=16)
     query = "INSERT INTO USERS (username, password_hash, role) VALUES (%s, %s, %s)"
     query_snowflake(query, (username, hashed_password, role))
+
+# Admin Login Route
+@app.route("/admin_login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        try:
+            # Fetch admin credentials from Snowflake
+            query = "SELECT password_hash FROM USERS WHERE username = %s AND role = 'admin'"
+            result = query_snowflake(query, (username,))
+
+            if result:
+                stored_hash = result[0][0]  # Extract stored password hash
+                print(f"DEBUG: Stored Hash = {stored_hash}")  # Debugging output
+
+                # Verify password
+                if check_password_hash(stored_hash, password):
+                    session["admin"] = username
+                    return redirect(url_for("admin_dashboard"))
+                else:
+                    print("DEBUG: ❌ Incorrect password!")  # Debugging output
+                    return render_template("admin_login.html", error="Invalid Credentials")
+            else:
+                print("DEBUG: ❌ Admin user not found!")  # Debugging output
+                return render_template("admin_login.html", error="Admin not found")
+
+        except Exception as e:
+            print(f"DEBUG: ❌ Error in admin login - {e}")  # Print error message
+            return render_template("admin_login.html", error="An error occurred, check logs.")
+
+    return render_template("admin_login.html")
+
+
+
+# Admin Dashboard Route
+@app.route("/admin_dashboard")
+def admin_dashboard():
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    query = "SELECT username, role FROM USERS"
+    users = query_snowflake(query)
+    return render_template("admin_dashboard.html", users=users)
+
+# Update User Role Route
+@app.route("/update_user", methods=["POST"])
+def update_user():
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    username = request.form.get("username")
+    new_role = request.form.get("role")
+    query = "UPDATE USERS SET role = %s WHERE username = %s"
+    query_snowflake(query, (new_role, username))
+    return redirect(url_for("admin_dashboard"))
+
+# Delete User Route
+@app.route("/delete_user", methods=["POST"])
+def delete_user():
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    username = request.form.get("username")
+    query = "DELETE FROM USERS WHERE username = %s"
+    query_snowflake(query, (username,))
+    return redirect(url_for("admin_dashboard"))
+# Route to render Add User page
+@app.route("/add_user", methods=["GET", "POST"])
+def add_user():
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        role = request.form.get("role")
+
+        # Hash password before storing
+        hashed_password = generate_password_hash(password)
+
+        # Insert into database
+        try:
+            query = "INSERT INTO USERS (username, password_hash, role) VALUES (%s, %s, %s)"
+            query_snowflake(query, (username, hashed_password, role))
+            return redirect(url_for("admin_dashboard"))
+        except Exception as e:
+            return render_template("add_user.html", error=f"Error: {e}")
+
+    return render_template("add_user.html")
+
+# Route to render Reset Password page
+@app.route("/reset_password", methods=["GET", "POST"])
+def reset_password():
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        new_password = request.form.get("new_password")
+
+        # Hash new password
+        hashed_password = generate_password_hash(new_password)
+
+        # Update database
+        try:
+            query = "UPDATE USERS SET password_hash = %s WHERE username = %s"
+            query_snowflake(query, (hashed_password, username))
+            return redirect(url_for("admin_dashboard"))
+        except Exception as e:
+            return render_template("reset_password.html", error=f"Error: {e}")
+
+    return render_template("reset_password.html")
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8000)
