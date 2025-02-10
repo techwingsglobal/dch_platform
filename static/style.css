@@ -328,3 +328,17 @@ button:hover {
     font-size: 14px;
     margin-bottom: 10px;
 }
+.logout-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s ease;
+}
+.logout-button:hover {
+    background: #0056b3;
+}

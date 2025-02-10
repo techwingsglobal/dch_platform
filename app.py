@@ -88,7 +88,36 @@ def search_medical_data(query):
     return results
 
 
+# User Registration Route
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+        role = request.form.get("role")
 
+        if password != confirm_password:
+            return render_template("register.html", error="Passwords do not match.")
+
+        hashed_password = generate_password_hash(password)
+
+        try:
+            # Check if the username already exists
+            check_query = "SELECT username FROM USERS WHERE username = %s"
+            existing_user = query_snowflake(check_query, (username,))
+            if existing_user:
+                return render_template("register.html", error="Username already taken.")
+
+            # Insert new user into database
+            insert_query = "INSERT INTO USERS (username, password_hash, role) VALUES (%s, %s, %s)"
+            query_snowflake(insert_query, (username, hashed_password, role))
+
+            return redirect(url_for("login"))
+        except Exception as e:
+            return render_template("register.html", error=f"Error: {e}")
+
+    return render_template("register.html")
 @app.route("/")
 def login():
     return render_template("login.html")

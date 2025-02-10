@@ -8,9 +8,10 @@
 </head>
 <body class="chat-body">
     <div class="chat-container">
-        <header class="chat-header">
-            <h1>Welcome, Doctor</h1>
+         <header class="chat-header">
+            <h1>Welcome, {{ session['username'] }}</h1>
             <p>Access medical database and AI assistance</p>
+            <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
         </header>
         <main class="chat-main">
             <section class="chat-section">
